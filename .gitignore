@@ -1,0 +1,36 @@
+# Material y guias locales
+Material/
+material/
+[Mm]aterial/
+
+# Entornos virtuales Python
+.venv/
+venv/
+env/
+ENV/
+
+# Archivos de entorno y credenciales
+.env
+.env.local
+*.env
+
+# Python cache y compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Bases de datos locales y vectores (ChromaDB, SQLite, etc.)
+*.db
+*.sqlite
+*.sqlite3
+chroma_data/
+.chroma/
+
+# IDE y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
