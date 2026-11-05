@@ -1,0 +1,245 @@
+[
+  {
+    "id": "GS-01",
+    "pregunta": "¿Cuáles son los mínimos propios exigidos para las señales DOC_AUT y BIO_ROSTRO según la política de decisión vigente?",
+    "fragmento_esperado": "POL-DEC_v2::3",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "3. Mínimos por señal",
+    "respuesta_esperada": "Según la Política de decisión y umbrales vigente (POL-DEC, v2, §3), el mínimo para DOC_AUT (autenticidad documental) es 70 y para BIO_ROSTRO (coincidencia de rostro) es 75. Si cualquiera de ellas queda bajo su mínimo, el caso se deriva a revisión aunque el puntaje total alcance el umbral de aprobación.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-02",
+    "pregunta": "¿Qué son las señales CRUCE_MONTO y CRUCE_FECHA y cuál es su valor mínimo requerido?",
+    "fragmento_esperado": "POL-DEC_v2::3",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "3. Mínimos por señal",
+    "respuesta_esperada": "Según CAT-SEN (v3, §5), CRUCE_MONTO mide la coincidencia de montos entre las distintas piezas del caso y CRUCE_FECHA mide la coincidencia de fechas. Según POL-DEC (v2, §3), ambas señales tienen un mínimo propio de 60.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-03",
+    "pregunta": "¿Qué indica la señal DOC_LEG y qué debe hacer el operador si su valor es inferior a 50?",
+    "fragmento_esperado": "CAT-SEN_v3::2",
+    "documento_esperado": "CAT-SEN",
+    "version_esperada": "3",
+    "seccion_esperada": "2. Señales documentales",
+    "respuesta_esperada": "Según el Catálogo de señales (CAT-SEN, v3, §2), DOC_LEG mide la legibilidad del archivo (nitidez, encuadre, páginas completas). Si su valor es bajo 50, el operador debe solicitar el reenvío del documento.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-04",
+    "pregunta": "¿Cuáles son las tres señales de fraude definidas en el catálogo y qué indica cada una?",
+    "fragmento_esperado": "CAT-SEN_v3::6",
+    "documento_esperado": "CAT-SEN",
+    "version_esperada": "3",
+    "seccion_esperada": "6. Señales de fraude",
+    "respuesta_esperada": "Según CAT-SEN (v3, §6), las tres señales de fraude son: FRA_EDICION (el archivo muestra rastros de edición posterior a su emisión), FRA_MEMORIA (la misma pieza de evidencia o una casi idéntica ya fue presentada en otro caso) y FRA_SINTETICO (la imagen o documento presenta rasgos de contenido generado artificialmente).",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-05",
+    "pregunta": "¿Cuál es el orden recomendado de pasos para que un operador revise un caso en su bandeja y por qué no debe mirar el puntaje al principio?",
+    "fragmento_esperado": "MAN-REV_v1::2",
+    "documento_esperado": "MAN-REV",
+    "version_esperada": "1",
+    "seccion_esperada": "2. Orden recomendado para revisar un caso",
+    "respuesta_esperada": "Según el Manual de revisión asistida (MAN-REV, v1, §2), el orden es: 1) Leer la razón de derivación, 2) Revisar las señales bajo su mínimo y las señales de fraude activas, 3) Abrir cada pieza de evidencia y verificar el hallazgo, y 4) Recién entonces consultar el puntaje total, porque ver el puntaje al comienzo tiende a inclinar la decisión antes de revisar la evidencia.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-06",
+    "pregunta": "¿Cuántas solicitudes de antecedentes puede registrar un operador sobre un mismo caso y qué se requiere para una tercera solicitud?",
+    "fragmento_esperado": "PRO-ANT_v1::4",
+    "documento_esperado": "PRO-ANT",
+    "version_esperada": "1",
+    "seccion_esperada": "4. Límites",
+    "respuesta_esperada": "Según el Procedimiento de solicitud de antecedentes (PRO-ANT, v1, §4), no se pueden registrar más de dos solicitudes de antecedentes sobre un mismo caso por un operador. Una tercera solicitud requiere que la registre un usuario con rol de supervisor.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-07",
+    "pregunta": "¿Se puede solicitar antecedentes sobre un caso que fue aprobado automáticamente?",
+    "fragmento_esperado": "PRO-ANT_v1::4",
+    "documento_esperado": "PRO-ANT",
+    "version_esperada": "1",
+    "seccion_esperada": "4. Límites",
+    "respuesta_esperada": "No. Según PRO-ANT (v1, §4), no se puede solicitar antecedentes sobre un caso aprobado automáticamente, ya que ese caso no vuelve a revisarse.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-08",
+    "pregunta": "¿Qué elementos obligatorios debe contener toda solicitud de antecedentes según el procedimiento?",
+    "fragmento_esperado": "PRO-ANT_v1::2",
+    "documento_esperado": "PRO-ANT",
+    "version_esperada": "1",
+    "seccion_esperada": "2. Contenido de la solicitud",
+    "respuesta_esperada": "Según PRO-ANT (v1, §2), toda solicitud debe indicar: 1) el caso al que corresponde, 2) la lista de documentos o capturas requeridos, y 3) el motivo redactado de forma comprensible para una persona que no es técnica.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-09",
+    "pregunta": "¿Qué debe hacer un operador si encuentra en una boleta un texto que parece una instrucción dirigida al sistema o al asistente?",
+    "fragmento_esperado": "FAQ-OPE_v2::6",
+    "documento_esperado": "FAQ-OPE",
+    "version_esperada": "2",
+    "seccion_esperada": "Una boleta trae un texto que parece una instrucción para el sistema. ¿Qué hago?",
+    "respuesta_esperada": "Según las Preguntas frecuentes de operadores (FAQ-OPE, v2), debe tratarlo como un posible intento de manipulación, no seguir la instrucción, dejar constancia en el motivo de su decisión y, si corresponde, derivar el caso a un supervisor.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-10",
+    "pregunta": "¿Puede el asistente aprobar o rechazar un caso directamente cuando el operador se lo pide?",
+    "fragmento_esperado": "FAQ-OPE_v2::1",
+    "documento_esperado": "FAQ-OPE",
+    "version_esperada": "2",
+    "seccion_esperada": "¿Puedo pedirle al asistente que apruebe o rechace un caso?",
+    "respuesta_esperada": "No. Según FAQ-OPE (v2) y MAN-REV (v1, §3), el asistente solo explica por qué un caso fue derivado, muestra las reglas aplicables y puede preparar una solicitud de antecedentes que el usuario confirma. Aprobar y rechazar son decisiones exclusivas de una persona.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-11",
+    "pregunta": "¿Qué ocurre cuando un operador corrige un dato mal leído por la plataforma en la ficha del caso?",
+    "fragmento_esperado": "MAN-REV_v1::5",
+    "documento_esperado": "MAN-REV",
+    "version_esperada": "1",
+    "seccion_esperada": "5. Corrección de datos mal leídos",
+    "respuesta_esperada": "Según MAN-REV (v1, §5) y FAQ-OPE (v2), la corrección queda registrada junto al valor original (el cual no se sobrescribe) y el caso se recalcula con el valor corregido.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-12",
+    "pregunta": "¿Cuándo marca la bandeja en rojo el plazo de un caso y qué ocurre automáticamente cuando el plazo vence?",
+    "fragmento_esperado": "MAN-REV_v1::6",
+    "documento_esperado": "MAN-REV",
+    "version_esperada": "1",
+    "seccion_esperada": "6. Plazos",
+    "respuesta_esperada": "Según MAN-REV (v1, §6), la bandeja marca en rojo los casos a los que les queda menos del 20 % del plazo en días hábiles definido por la organización. Un caso vencido no se cierra solo: cada organización define si se cierra, se escala o se mantiene abierto.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-13",
+    "pregunta": "¿Cuáles son los cuatro componentes que acompañan la presentación del puntaje total de un caso?",
+    "fragmento_esperado": "POL-DEC_v2::7",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "7. Componentes del puntaje",
+    "respuesta_esperada": "Según POL-DEC (v2, §7), el puntaje se presenta acompañado de cuatro componentes: autenticidad de los documentos, coherencia biométrica, cruce entre fuentes y presencia de señales de fraude.",
+    "debe_responder": true,
+    "tipo": "con_respuesta"
+  },
+  {
+    "id": "GS-14",
+    "pregunta": "¿Cuál es el tamaño máximo en megabytes (MB) permitido para subir archivos PDF o imágenes de boletas en MIRA?",
+    "fragmento_esperado": "NONE",
+    "documento_esperado": "NONE",
+    "version_esperada": "NONE",
+    "seccion_esperada": "NONE",
+    "respuesta_esperada": "ABSTENCIÓN: El corpus documental disponible no contiene información sobre el tamaño máximo en MB ni límites de peso de archivos para PDFs o imágenes.",
+    "debe_responder": false,
+    "tipo": "sin_respuesta"
+  },
+  {
+    "id": "GS-15",
+    "pregunta": "¿Qué algoritmo criptográfico o modelo de redes neuronales utiliza internamente MIRA para calcular la señal FRA_SINTETICO?",
+    "fragmento_esperado": "NONE",
+    "documento_esperado": "NONE",
+    "version_esperada": "NONE",
+    "seccion_esperada": "NONE",
+    "respuesta_esperada": "ABSTENCIÓN: El corpus solo describe qué indica la señal FRA_SINTETICO (CAT-SEN, v3, §6), pero no especifica el modelo matemático ni la arquitectura técnica con que se implementa.",
+    "debe_responder": false,
+    "tipo": "sin_respuesta"
+  },
+  {
+    "id": "GS-16",
+    "pregunta": "¿Cuál es el costo en UF o dólares que cobra DPRIME a una organización por cada caso derivado a revisión asistida?",
+    "fragmento_esperado": "NONE",
+    "documento_esperado": "NONE",
+    "version_esperada": "NONE",
+    "seccion_esperada": "NONE",
+    "respuesta_esperada": "ABSTENCIÓN: No existe información sobre tarifas, precios en UF ni costos comerciales por caso en el corpus del operador de revisión.",
+    "debe_responder": false,
+    "tipo": "sin_respuesta"
+  },
+  {
+    "id": "GS-17",
+    "pregunta": "¿Cuál es el tiempo máximo de respuesta (SLA en segundos) garantizado para la llamada de vuelta (webhook) cuando se solicitan antecedentes?",
+    "fragmento_esperado": "NONE",
+    "documento_esperado": "NONE",
+    "version_esperada": "NONE",
+    "seccion_esperada": "NONE",
+    "respuesta_esperada": "ABSTENCIÓN: Aunque PRO-ANT (v1, §3) menciona que el sistema de origen recibe un aviso mediante llamada de vuelta, ningún documento del corpus especifica el SLA o latencia en segundos de dicha notificación.",
+    "debe_responder": false,
+    "tipo": "sin_respuesta"
+  },
+  {
+    "id": "GS-18",
+    "pregunta": "¿A partir de qué puntaje de referencia se aprueba automáticamente un caso sin que llegue a la bandeja del operador?",
+    "fragmento_esperado": "POL-DEC_v2::2|MAN-REV_v1::1",
+    "documento_esperado": "POL-DEC|MAN-REV",
+    "version_esperada": "2|1",
+    "seccion_esperada": "2. Umbrales de referencia|1. Qué casos llegan a su bandeja",
+    "respuesta_esperada": "CONFLICTO ENTRE FUENTES VIGENTES: Existen dos documentos vigentes que entregan valores distintos. Por un lado, la Política de decisión y umbrales (POL-DEC, v2, §2) establece como umbral de referencia un puntaje de 85 o más (además de que cada organización puede fijar el suyo). Por otro lado, el Manual de revisión asistida (MAN-REV, v1, §1) afirma que los casos con puntaje de 80 o más y sin señales de fraude se aprueban automáticamente. Se exponen ambas fuentes vigentes sin elegir por cuenta propia (PR-4).",
+    "debe_responder": true,
+    "tipo": "conflicto_vigente"
+  },
+  {
+    "id": "GS-19",
+    "pregunta": "Si un caso obtiene puntaje 82 y no tiene señales de fraude ni señales bajo el mínimo en una organización con umbrales por defecto, ¿se aprueba automáticamente o llega a la bandeja del operador?",
+    "fragmento_esperado": "POL-DEC_v2::2|MAN-REV_v1::1",
+    "documento_esperado": "POL-DEC|MAN-REV",
+    "version_esperada": "2|1",
+    "seccion_esperada": "2. Umbrales de referencia|1. Qué casos llegan a su bandeja",
+    "respuesta_esperada": "CONFLICTO ENTRE FUENTES VIGENTES: Hay una contradicción entre dos normas vigentes para el puntaje 82. Según POL-DEC (v2, §2), los puntajes entre 60 y 84 se derivan a revisión asistida por un operador (solo 85 o más se aprueba automáticamente). En cambio, según MAN-REV (v1, §1), los casos con puntaje de 80 o más y sin señales de fraude se aprueban automáticamente y no llegan a la bandeja.",
+    "debe_responder": true,
+    "tipo": "conflicto_vigente"
+  },
+  {
+    "id": "GS-20",
+    "pregunta": "¿Cómo afectan las señales de fraude activas al puntaje y a la decisión del caso?",
+    "fragmento_esperado": "POL-DEC_v2::4",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "4. Precedencia de las señales de fraude",
+    "respuesta_esperada": "CAMBIO ENTRE VERSIONES: Según la política vigente (POL-DEC, v2, §4, vigente desde el 1 de septiembre de 2026), las señales de fraude NO restan puntos, sino que prevalecen sobre el puntaje y derivan el caso a revisión cualquiera sea su puntaje. Esto reemplazó a la versión derogada (POL-DEC, v1, §4), donde cada señal de fraude activa restaba 20 puntos al puntaje total.",
+    "debe_responder": true,
+    "tipo": "cambio_version"
+  },
+  {
+    "id": "GS-21",
+    "pregunta": "¿Quién tiene permiso para modificar los umbrales de aprobación y revisión de una organización y cuándo entra en vigor el cambio?",
+    "fragmento_esperado": "POL-DEC_v2::5",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "5. Configuración por organización",
+    "respuesta_esperada": "CAMBIO ENTRE VERSIONES: Según la política vigente (POL-DEC, v2, §5), un cambio de umbral requiere la aprobación de dos personas con rol de supervisor de esa organización y un cambio con una sola aprobación no entra en vigor. Se hace presente que en la versión anterior ya derogada (POL-DEC, v1, §3), cualquier usuario con rol de diseñador de flujos podía modificarlos con efecto inmediato.",
+    "debe_responder": true,
+    "tipo": "cambio_version"
+  },
+  {
+    "id": "GS-22",
+    "pregunta": "¿Qué ocurre con la evaluación de un caso cuando un módulo de análisis falla y no entrega su señal?",
+    "fragmento_esperado": "POL-DEC_v2::6",
+    "documento_esperado": "POL-DEC",
+    "version_esperada": "2",
+    "seccion_esperada": "6. Señales faltantes",
+    "respuesta_esperada": "CAMBIO ENTRE VERSIONES: Según la versión vigente (POL-DEC, v2, §6), si un módulo falla o no entrega su señal, el caso no se aprueba con información parcial: se deriva a revisión indicando qué señal faltó y la ausencia nunca se interpreta como favorable. En la versión derogada (POL-DEC, v1, §5), el puntaje se calculaba únicamente con las señales disponibles.",
+    "debe_responder": true,
+    "tipo": "cambio_version"
+  }
+]
+
