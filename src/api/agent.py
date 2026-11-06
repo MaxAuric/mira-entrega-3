@@ -280,7 +280,15 @@ class MIRAOperadorAgent:
             citas = [r["cita"] for r in evidencia_rag]
 
             docs_req = documentos_solicitados or "Documento o captura legible de respaldo para el caso"
-            motivo_req = motivo_solicitud or f"Solicitud preparada por el operador desde el asistente para el caso {case_id}"
+            if motivo_solicitud:
+                motivo_req = motivo_solicitud
+            else:
+                m_motivo = re.search(r"\b(?:porque|debido a que|debido a|ya que)\s+(.+)$", pregunta, re.IGNORECASE)
+                if m_motivo and len(m_motivo.group(1).strip()) >= 8:
+                    raw_m = m_motivo.group(1).strip().rstrip(".")
+                    motivo_req = raw_m[0].upper() + raw_m[1:]
+                else:
+                    motivo_req = f"Solicitud preparada por el operador desde el asistente para el caso {case_id}"
 
             act_res = self.mcp.solicitar_antecedentes(
                 caso_id=case_id,
@@ -365,9 +373,33 @@ class MIRAOperadorAgent:
             org = caso_info["organizacion"]
             motivo_der = caso.get("motivo_derivacion") or "umbrales y política de decisión"
 
-            rag_query = f"Política de decisión umbrales señales {motivo_der} {pregunta}"
+            extra_terms = ""
+            if "falta" in motivo_der.lower() or "no respondió" in motivo_der.lower() or "no respondio" in motivo_der.lower():
+                extra_terms = "señales faltantes módulo falla información parcial POL-DEC sección 6"
+
+            rag_query = f"Política de decisión umbrales señales {motivo_der} {extra_terms} {pregunta}"
             rag_res = self.mcp.buscar_reglas(rag_query, top_k=3)
             evidencia_rag = rag_res["results"]
+            if extra_terms:
+                for ch in self.mcp.rag.chunks:
+                    if ch["chunk_id"] == "POL-DEC_v2::6" and not any(r["chunk_id"] == "POL-DEC_v2::6" for r in evidencia_rag[:2]):
+                        evidencia_rag.insert(
+                            0,
+                            {
+                                "chunk_id": ch["chunk_id"],
+                                "codigo": ch["codigo"],
+                                "titulo": ch["titulo"],
+                                "version": ch["version"],
+                                "estado": ch["estado"],
+                                "vigencia": ch["vigencia"],
+                                "seccion": ch["seccion"],
+                                "cita": f"[{ch['codigo']}, §{ch['seccion']}, v{ch['version']} ({ch['estado']})]",
+                                "score": 15.0,
+                                "texto": ch["texto"],
+                            },
+                        )
+                        evidencia_rag = evidencia_rag[:3]
+                        break
             citas = [r["cita"] for r in evidencia_rag]
 
             partes_respuesta = [

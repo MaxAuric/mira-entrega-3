@@ -44,8 +44,19 @@ SYNONYM_MAP = {
     "plazo": ["plazos", "vence", "vencido", "rojo", "20"],
     "componentes": ["cuatro", "acompanan", "puntaje", "autenticidad", "coherencia"],
     "falla": ["faltantes", "faltante", "modulo", "entrega", "parcial"],
+    "falta": ["faltantes", "faltante", "modulo", "falla", "parcial", "ausencia", "entrega"],
+    "respondio": ["entrega", "falla", "faltantes", "modulo", "parcial"],
     "orden": ["pasos", "recomendado", "revisar", "bandeja", "primero"],
     "modificar": ["cambio", "configuracion", "supervisores", "aprobacion", "disenador"],
+}
+
+# Palabras genéricas del dominio que por sí solas no justifican responder si el término específico no existe en el corpus
+GENERIC_QUERY_WORDS = {
+    "caso", "casos", "operador", "operadores", "reviso", "revisar", "revision",
+    "mira", "dprime", "organizacion", "organizaciones", "sistema", "plataforma",
+    "cuanto", "cual", "cuales", "como", "donde", "cuando", "quien", "porque",
+    "que", "dice", "pasa", "hacer", "hago", "puede", "puedo", "tiene", "tienen",
+    "por", "cada", "para", "una", "uno", "del", "las", "los",
 }
 
 # Términos explícitamente fuera de alcance del corpus CU-1 (para garantizar abstención PR-3)
@@ -61,6 +72,14 @@ OUT_OF_CORPUS_PATTERNS = [
     r"\bsla en segundos\b",
     r"\blatencia\b",
     r"\bwebhook\b",
+    r"\bpagan\b",
+    r"\bsueldo\b",
+    r"\bsalario\b",
+    r"\bremuneraci[óo]n\b",
+    r"\bvacaciones\b",
+    r"\bmulta\b",
+    r"\bbono por cada\b",
+    r"\bbono en dinero\b",
 ]
 
 
@@ -157,6 +176,25 @@ class RAGRetriever:
                 }
 
         query_tokens = self._expand_query_tokens(query)
+        base_tokens = tokenize_es(query)
+        specific_tokens = [t for t in base_tokens if t not in GENERIC_QUERY_WORDS]
+        if specific_tokens:
+            has_known_specific = any(
+                t in self.idf or any(s in self.idf for s in SYNONYM_MAP.get(t, []))
+                for t in specific_tokens
+            )
+            if not has_known_specific:
+                return {
+                    "query": query,
+                    "abstain": True,
+                    "abstain_reason": (
+                        "Los conceptos específicos consultados no se encuentran en el corpus documental de MIRA CU-1 (PR-3)."
+                    ),
+                    "conflict_detected": False,
+                    "version_change_detected": False,
+                    "results": [],
+                }
+
         q_char_vec = self.char_vectorizer.transform([q_lower])
         char_sims = cosine_similarity(q_char_vec, self.char_matrix).flatten()
 
