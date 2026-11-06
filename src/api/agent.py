@@ -98,8 +98,12 @@ class MIRAOperadorAgent:
         return None
 
     def _extract_case_id(self, text: str) -> Optional[str]:
-        m = re.search(r"\b(C-\d{3})\b", text.upper())
-        return m.group(1) if m else None
+        # Acepta: "C-012", "C012", "C 012", "C-12", "C12", "C 12", "caso 12", "caso 012"
+        m = re.search(r"\b(?:CASO\s*[-:]?\s*C?[-\s]?|C[-\s]?)(\d{2,3})\b", text.upper())
+        if not m:
+            return None
+        num = int(m.group(1))
+        return f"C-{num:03d}"
 
     def _is_greeting_only(self, text: str) -> bool:
         clean = re.sub(r"[^a-záéíóúñ\s]", "", text.lower()).strip()
