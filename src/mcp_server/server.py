@@ -640,8 +640,13 @@ class MIRAMCPServer:
             }
 
     def run_stdio(self):
-        """Ejecuta el servidor MCP leyendo y respondiendo mensajes JSON-RPC por stdin/stdout."""
+        """Ejecuta el servidor MCP leyendo y respondiendo mensajes JSON-RPC por stdin/stdout en UTF-8."""
         import sys
+
+        if hasattr(sys.stdin, "reconfigure"):
+            sys.stdin.reconfigure(encoding="utf-8")
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8")
 
         for line in sys.stdin:
             line = line.strip()

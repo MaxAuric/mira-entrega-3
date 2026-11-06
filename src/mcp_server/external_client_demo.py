@@ -24,6 +24,10 @@ def send_rpc(proc: subprocess.Popen, msg: dict) -> dict:
 
 
 def run_external_client_demo():
+    import os
+
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
     proc = subprocess.Popen(
         [sys.executable, "-m", "src.mcp_server.server", "--stdio"],
         stdin=subprocess.PIPE,
@@ -31,6 +35,7 @@ def run_external_client_demo():
         stderr=subprocess.PIPE,
         text=True,
         encoding="utf-8",
+        env=env,
     )
 
     try:
