@@ -67,6 +67,8 @@ def parse_markdown_header(content: str, filename: str) -> Tuple[Dict[str, str], 
                 meta["vigencia"] = clean_val
             elif "responsable" in key:
                 meta["responsable"] = clean_val
+            elif "origen" in key:
+                meta["origen"] = clean_val
 
         if line.strip().startswith("## "):
             body_start_idx = idx

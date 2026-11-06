@@ -586,8 +586,80 @@ class MIRAMCPServer:
             },
         ]
 
+    # =========================================================================
+    # PROTOCOLO JSON-RPC 2.0 ESTÁNDAR MCP (Para Clientes Externos / stdio)
+    # =========================================================================
+
+    def handle_jsonrpc(self, request: Dict[str, Any]) -> Dict[str, Any]:
+        """Procesa mensajes JSON-RPC 2.0 según la especificación oficial de Model Context Protocol."""
+        req_id = request.get("id")
+        method = request.get("method", "")
+        params = request.get("params") or {}
+
+        try:
+            if method == "initialize":
+                result = {
+                    "protocolVersion": "2024-11-05",
+                    "serverInfo": {"name": "mira-cu1-mcp-server", "version": "3.0.0"},
+                    "capabilities": {"tools": {}, "resources": {}, "prompts": {}},
+                }
+            elif method == "tools/list":
+                result = {"tools": self.list_tools()}
+            elif method == "tools/call":
+                tool_name = params.get("name")
+                tool_args = params.get("arguments") or {}
+                if not hasattr(self, tool_name):
+                    raise ValueError(f"Herramienta MCP desconocida: {tool_name}")
+                fn = getattr(self, tool_name)
+                output = fn(**tool_args)
+                result = {
+                    "content": [{"type": "text", "text": json.dumps(output, ensure_ascii=False)}],
+                    "structuredContent": output,
+                    "isError": not output.get("ok", True),
+                }
+            elif method == "resources/list":
+                result = {"resources": self.list_resources()}
+            elif method == "resources/read":
+                uri = params.get("uri", "")
+                data = self.read_resource(uri)
+                result = {"contents": [{"uri": uri, "mimeType": "application/json", "text": json.dumps(data, ensure_ascii=False)}]}
+            elif method == "prompts/list":
+                result = {"prompts": self.list_prompts()}
+            else:
+                return {
+                    "jsonrpc": "2.0",
+                    "id": req_id,
+                    "error": {"code": -32601, "message": f"Método MCP no soportado: {method}"},
+                }
+            return {"jsonrpc": "2.0", "id": req_id, "result": result}
+        except Exception as exc:
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32000, "message": str(exc)},
+            }
+
+    def run_stdio(self):
+        """Ejecuta el servidor MCP leyendo y respondiendo mensajes JSON-RPC por stdin/stdout."""
+        import sys
+
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            req = json.loads(line)
+            resp = self.handle_jsonrpc(req)
+            sys.stdout.write(json.dumps(resp, ensure_ascii=False) + "\n")
+            sys.stdout.flush()
+
 
 if __name__ == "__main__":
+    import sys
+
+    if "--stdio" in sys.argv:
+        MIRAMCPServer().run_stdio()
+        sys.exit(0)
+
     # Suite de verificación en consola de todos los escenarios exigidos por el capítulo 5 y D4-D7
     init_database()  # Asegurar estado limpio de la BD antes de la prueba
     server = MIRAMCPServer()

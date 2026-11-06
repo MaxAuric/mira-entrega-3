@@ -167,7 +167,8 @@ class RAGRetriever:
 
             bm25 = self._bm25_score(query_tokens, ch)
             char_sim = float(char_sims[idx])
-            combined_score = bm25 + (char_sim * 6.0)
+            # Solo sumar similitud de caracteres cuando exista al menos una coincidencia léxica real
+            combined_score = (bm25 + (char_sim * 5.0)) if bm25 > 0.5 else (bm25 * 0.5)
 
             # Priorizar versión vigente sobre derogada a igualdad de tema
             if ch["estado"] == "Vigente":
@@ -181,7 +182,7 @@ class RAGRetriever:
         max_score = scored_chunks[0][0] if scored_chunks else 0.0
         max_bm25 = scored_chunks[0][1] if scored_chunks else 0.0
 
-        if max_score < min_score_threshold or max_bm25 < 1.2:
+        if max_score < min_score_threshold or max_bm25 < 2.2:
             return {
                 "query": query,
                 "abstain": True,
