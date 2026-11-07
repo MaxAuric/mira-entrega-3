@@ -37,7 +37,7 @@ def load_dotenv_file():
         k, v = line.split("=", 1)
         k = k.strip()
         v = v.strip().strip('"').strip("'")
-        if k and v and k not in os.environ:
+        if k and v:
             os.environ[k] = v
 
 
@@ -59,45 +59,57 @@ class MIRAOperadorAgent:
     def __init__(self, mcp_server: Optional[MIRAMCPServer] = None):
         load_dotenv_file()
         self.mcp = mcp_server or MIRAMCPServer()
-        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3-flash-preview")
+        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
+        self.last_used_gemini_model = self.gemini_model
 
     def _call_gemini_llm(self, prompt_context: str) -> Optional[str]:
         """
         Invoca a Google Gemini API en la nube si `GEMINI_API_KEY` está configurada.
-        Si no hay API Key o la respuesta queda truncada, retorna None para usar la síntesis verificada local.
+        Incluye rotación automática entre modelos Flash gratuitos si alguno alcanza su límite diario/por minuto (HTTP 429).
         """
+        load_dotenv_file()
         api_key = os.environ.get("GEMINI_API_KEY", "").strip()
         if not api_key or api_key == "TU_API_KEY_AQUI":
             return None
 
-        url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{self.gemini_model}:generateContent?key={api_key}"
-        )
+        primary = os.environ.get("GEMINI_MODEL", self.gemini_model).strip()
+        candidate_models = []
+        for m in [primary, "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3-flash-preview"]:
+            if m and m not in candidate_models:
+                candidate_models.append(m)
+
         payload = {
             "system_instruction": {"parts": [{"text": SYSTEM_CONSTITUTION}]},
             "contents": [{"role": "user", "parts": [{"text": prompt_context}]}],
             "generationConfig": {"temperature": 0.1, "maxOutputTokens": 4096},
         }
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                candidates = data.get("candidates") or []
-                if candidates:
-                    finish_reason = candidates[0].get("finishReason", "STOP")
-                    if finish_reason == "MAX_TOKENS":
-                        return None
-                    parts = candidates[0].get("content", {}).get("parts") or []
-                    if parts and "text" in parts[0]:
-                        return parts[0]["text"].strip()
-        except Exception:
-            return None
+        encoded_payload = json.dumps(payload).encode("utf-8")
+
+        for model_name in candidate_models:
+            url = (
+                f"https://generativelanguage.googleapis.com/v1beta/models/"
+                f"{model_name}:generateContent?key={api_key}"
+            )
+            req = urllib.request.Request(
+                url,
+                data=encoded_payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    candidates = data.get("candidates") or []
+                    if candidates:
+                        finish_reason = candidates[0].get("finishReason", "STOP")
+                        if finish_reason == "MAX_TOKENS":
+                            continue
+                        parts = candidates[0].get("content", {}).get("parts") or []
+                        if parts and "text" in parts[0]:
+                            self.last_used_gemini_model = model_name
+                            return parts[0]["text"].strip()
+            except Exception:
+                continue
         return None
 
     def _extract_case_id(self, text: str) -> Optional[str]:
@@ -490,7 +502,7 @@ class MIRAOperadorAgent:
                 "datos_enviados_al_modelo": {
                     "pregunta_usuario": pregunta,
                     "usuario_id": usuario_id,
-                    "proveedor_llm": f"Google Gemini ({self.gemini_model})" if gemini_resp else "Síntesis Determinista Basada en Evidencia",
+                    "proveedor_llm": f"Google Gemini ({self.last_used_gemini_model})" if gemini_resp else "Síntesis Determinista Basada en Evidencia",
                     "caso_resumen": {
                         "caso_id": caso["caso_id"],
                         "org_id": caso["org_id"],
@@ -539,7 +551,7 @@ class MIRAOperadorAgent:
             "datos_enviados_al_modelo": {
                 "pregunta_usuario": pregunta,
                 "usuario_id": usuario_id,
-                "proveedor_llm": f"Google Gemini ({self.gemini_model})" if gemini_used else "Síntesis Determinista Basada en Evidencia",
+                "proveedor_llm": f"Google Gemini ({self.last_used_gemini_model})" if gemini_used else "Síntesis Determinista Basada en Evidencia",
                 "fragmentos_rag": [r["chunk_id"] for r in rag_answer["evidencia"]],
             },
         }
