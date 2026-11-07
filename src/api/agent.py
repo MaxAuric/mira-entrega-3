@@ -59,12 +59,12 @@ class MIRAOperadorAgent:
     def __init__(self, mcp_server: Optional[MIRAMCPServer] = None):
         load_dotenv_file()
         self.mcp = mcp_server or MIRAMCPServer()
-        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        self.gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3-flash-preview")
 
     def _call_gemini_llm(self, prompt_context: str) -> Optional[str]:
         """
         Invoca a Google Gemini API en la nube si `GEMINI_API_KEY` está configurada.
-        Si no hay API Key, retorna None para usar la síntesis verificada local.
+        Si no hay API Key o la respuesta queda truncada, retorna None para usar la síntesis verificada local.
         """
         api_key = os.environ.get("GEMINI_API_KEY", "").strip()
         if not api_key or api_key == "TU_API_KEY_AQUI":
@@ -77,7 +77,7 @@ class MIRAOperadorAgent:
         payload = {
             "system_instruction": {"parts": [{"text": SYSTEM_CONSTITUTION}]},
             "contents": [{"role": "user", "parts": [{"text": prompt_context}]}],
-            "generationConfig": {"temperature": 0.1, "maxOutputTokens": 900},
+            "generationConfig": {"temperature": 0.1, "maxOutputTokens": 4096},
         }
         req = urllib.request.Request(
             url,
@@ -86,10 +86,13 @@ class MIRAOperadorAgent:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 candidates = data.get("candidates") or []
                 if candidates:
+                    finish_reason = candidates[0].get("finishReason", "STOP")
+                    if finish_reason == "MAX_TOKENS":
+                        return None
                     parts = candidates[0].get("content", {}).get("parts") or []
                     if parts and "text" in parts[0]:
                         return parts[0]["text"].strip()
@@ -453,10 +456,24 @@ class MIRAOperadorAgent:
                 f"Pregunta del operador ({usuario_id}): {pregunta}\n\n"
                 f"Datos obtenidos desde el Servidor MCP y fragmentos RAG:\n{base_text}\n\n"
                 "Redacta la respuesta final para el operador conservando todos los datos del caso, todas las alertas "
-                "de auditoría/seguridad y todas las citas entre corchetes exactas."
+                "de auditoría/seguridad (incluyendo códigos como CU-001 o ALERTA DE SEGURIDAD si existen) "
+                "y todas las citas entre corchetes exactas."
             )
             gemini_resp = self._call_gemini_llm(llm_prompt)
-            final_resp = gemini_resp if gemini_resp else base_text
+            if gemini_resp:
+                missing_addons = []
+                for r in evidencia_rag[:2]:
+                    if r["cita"] not in gemini_resp:
+                        missing_addons.append(f"- Cita normativa verificada: {r['cita']}")
+                if alertas_seguridad and "ALERTA DE SEGURIDAD" not in gemini_resp.upper():
+                    missing_addons.append(
+                        f"- **ALERTA DE SEGURIDAD (Defensa Anti-Prompt Injection):** {alertas_seguridad[0]}"
+                    )
+                if missing_addons:
+                    gemini_resp = gemini_resp + "\n\n" + "\n".join(missing_addons)
+                final_resp = gemini_resp
+            else:
+                final_resp = base_text
 
             trazas_actuales = self.mcp.call_traces[start_trace_idx:]
             return {
@@ -502,6 +519,8 @@ class MIRAOperadorAgent:
             )
             gemini_resp = self._call_gemini_llm(llm_prompt)
             if gemini_resp:
+                if rag_answer["citas"] and rag_answer["citas"][0] not in gemini_resp:
+                    gemini_resp = f"{gemini_resp}\n\n**Fuente normativa verificada:** {rag_answer['citas'][0]}"
                 final_resp = gemini_resp
                 gemini_used = True
 
