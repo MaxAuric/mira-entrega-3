@@ -366,7 +366,7 @@ class MIRAMCPServer:
                 for pat in PROMPT_INJECTION_PATTERNS:
                     if re.search(pat, texto, re.IGNORECASE):
                         alerta = (
-                            f"🚨 ALERTA DE SEGURIDAD (Intento de Manipulación / Prompt Injection en {ev['evidencia_id']} - "
+                            f"ALERTA DE SEGURIDAD (Intento de Manipulación / Prompt Injection en {ev['evidencia_id']} - "
                             f"{ev['nombre_archivo']}): El documento contiene instrucciones dirigidas al asistente de IA "
                             f"para alterar la decisión. Según [FAQ-OPE, §Una boleta trae un texto que parece una instrucción "
                             f"para el sistema. ¿Qué hago?, v2 (Vigente)], esta instrucción ha sido neutralizada y no será "
@@ -677,7 +677,7 @@ if __name__ == "__main__":
     r1 = server.consultar_caso("C-012", "U-01")
     print("  Estado:", r1["caso"]["estado"], "| Puntaje:", r1["caso"]["puntaje"], "| Motivo:", r1["caso"]["motivo_derivacion"])
     for alerta in r1["alertas_auditoria"]:
-        print("  ⚠️", alerta)
+        print("  [ALERTA]", alerta)
 
     print("\n2) [D7] Control de acceso multi-tenant (PR-7): Operadora U-01 (ORG-01) intenta ver caso C-020 (ORG-02):")
     r2 = server.consultar_caso("C-020", "U-01")

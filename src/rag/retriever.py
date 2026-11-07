@@ -304,7 +304,7 @@ class RAGRetriever:
             return {
                 "query": query,
                 "status": "ABSTENCION",
-                "respuesta": f"⚠️ ABSTENCIÓN (PR-3): {retrieval['abstain_reason']}",
+                "respuesta": f"ABSTENCIÓN (PR-3): {retrieval['abstain_reason']}",
                 "citas": [],
                 "evidencia": [],
             }
@@ -316,7 +316,7 @@ class RAGRetriever:
             pol_chunk = next((r for r in results if r["chunk_id"] == "POL-DEC_v2::2"), results[0])
             man_chunk = next((r for r in results if r["chunk_id"] == "MAN-REV_v1::1"), results[-1])
             respuesta = (
-                "⚖️ CONFLICTO ENTRE FUENTES VIGENTES DETECTADO (PR-4):\n"
+                "CONFLICTO ENTRE FUENTES VIGENTES DETECTADO (PR-4):\n"
                 "Existen dos documentos vigentes en el corpus que entregan reglas distintas sobre el umbral de aprobación automática:\n"
                 f"1. {pol_chunk['cita']}: Establece que la aprobación automática de referencia ocurre con puntaje de **85 o más** "
                 "(y entre 60 y 84 se deriva a revisión asistida por un operador).\n"
@@ -330,14 +330,14 @@ class RAGRetriever:
             derogado_chunks = [r for r in results if r["estado"] == "Derogada"]
             principal = vigente_chunks[0] if vigente_chunks else results[0]
             respuesta = (
-                f"📌 RESPUESTA CON CONTROL DE VIGENCIA (Versión Vigente Aplicada):\n"
+                f"RESPUESTA CON CONTROL DE VIGENCIA (Versión Vigente Aplicada):\n"
                 f"Según la norma vigente {principal['cita']} (vigencia: {principal['vigencia']}):\n"
                 f"{principal['texto']}\n"
             )
             if derogado_chunks:
                 der = derogado_chunks[0]
                 respuesta += (
-                    f"\n⚠️ Nota sobre versión derogada {der['cita']}: "
+                    f"\nNota sobre versión derogada {der['cita']}: "
                     f"Esta regla reemplazó a la versión 1 (derogada desde el 1 de septiembre de 2026), la cual establecía: "
                     f"«{der['texto']}»"
                 )
@@ -346,7 +346,7 @@ class RAGRetriever:
             principal = results[0]
             secundario = results[1] if len(results) > 1 else None
             respuesta = (
-                f"✅ RESPUESTA RESPALDADA EN EVIDENCIA DOCUMENTAL:\n"
+                f"RESPUESTA RESPALDADA EN EVIDENCIA DOCUMENTAL:\n"
                 f"Según {principal['cita']}:\n{principal['texto']}"
             )
             if secundario and secundario["score"] >= principal["score"] * 0.75:

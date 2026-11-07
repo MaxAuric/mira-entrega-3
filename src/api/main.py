@@ -44,6 +44,18 @@ try:
         motivo_solicitud: Optional[str] = None
         simulate_provider_failure: bool = False
 
+    @app.get("/")
+    def root() -> Dict[str, Any]:
+        return {
+            "mensaje": "Servidor Backend MIRA CU-1 activo",
+            "endpoints_disponibles": {
+                "health": "/health",
+                "mcp_primitives": "/mcp/primitives",
+                "traces": "/traces",
+                "chat_post": "/chat",
+            },
+        }
+
     @app.get("/health")
     def health() -> Dict[str, Any]:
         return {
@@ -94,7 +106,20 @@ class FallbackHTTPHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path == "/health":
+        if self.path in ("/", ""):
+            self._send_json(
+                200,
+                {
+                    "mensaje": "Servidor Backend MIRA CU-1 activo",
+                    "endpoints_disponibles": {
+                        "health": "/health",
+                        "mcp_primitives": "/mcp/primitives",
+                        "traces": "/traces",
+                        "chat_post": "/chat",
+                    },
+                },
+            )
+        elif self.path == "/health":
             self._send_json(
                 200,
                 {

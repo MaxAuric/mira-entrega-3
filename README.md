@@ -30,6 +30,8 @@ El asistente apoya a los operadores de organizaciones cliente que revisan casos 
 │   ├── api/
 │   │   ├── agent.py               # Orquestador agéntico (RAG + MCP) y declaración de datos
 │   │   └── main.py                # Servidor HTTP/FastAPI para conexión con el Frontend
+│   ├── ui/
+│   │   └── app.py                 # Interfaz Web en Streamlit para el operador (Sección 6.1, Criterio C5)
 │   └── eval/
 │       └── run_evaluation.py      # Evaluación empírica sobre las 22 preguntas del Golden Set
 └── requirements.txt
@@ -58,4 +60,7 @@ python -m src.eval.run_evaluation
 
 # 6. Levantar el servidor API Backend en http://127.0.0.1:8000
 python -m src.api.main
+
+# 7. Iniciar la Interfaz Web en Español (Frontend de Operador en Streamlit)
+streamlit run src/ui/app.py
 ```

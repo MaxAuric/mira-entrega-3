@@ -171,7 +171,7 @@ class MIRAOperadorAgent:
                 "usuario_id": usuario_id,
                 "pregunta": pregunta,
                 "respuesta": (
-                    "⚠️ SERVICIO NO DISPONIBLE (Sección 6.1): El proveedor del modelo o servicio backend no "
+                    "SERVICIO NO DISPONIBLE (Sección 6.1): El proveedor del modelo o servicio backend no "
                     "respondió dentro del tiempo esperado. Siguiendo los principios de seguridad de MIRA, "
                     "el asistente no emite ninguna respuesta inventada ni modifica el estado del caso. "
                     "Por favor, reintente en unos instantes."
@@ -194,7 +194,7 @@ class MIRAOperadorAgent:
                 "usuario_id": usuario_id,
                 "pregunta": pregunta,
                 "respuesta": (
-                    f"👋 Hola (`usuario conectado: {usuario_id}`). Soy el **Asistente del Operador de Revisión de MIRA (CU-1)**.\n"
+                    f"Hola (usuario conectado: {usuario_id}). Soy el **Asistente del Operador de Revisión de MIRA (CU-1)**.\n"
                     "Puedo ayudarte en tres tareas gobernadas:\n"
                     "1. **Consultar reglas y políticas del corpus (RAG):** ej. *«¿Cuáles son los mínimos por señal para DOC_AUT y BIO_ROSTRO?»*\n"
                     "2. **Analizar un caso derivado de tu organización (RAG + MCP):** ej. *«¿Por qué se derivó el caso C-012 si su puntaje es 86?»*\n"
@@ -220,7 +220,7 @@ class MIRAOperadorAgent:
                 "usuario_id": usuario_id,
                 "pregunta": pregunta,
                 "respuesta": (
-                    "🔒 **ACCESO DIRECTO A LA BASE DE DATOS DENEGADO (Principios PR-5 y PR-7):**\n"
+                    "**ACCESO DIRECTO A LA BASE DE DATOS DENEGADO (Principios PR-5 y PR-7):**\n"
                     "Ni el operador ni el modelo tienen acceso libre o directo a las tablas de la base de datos ni pueden ejecutar SQL. "
                     "Según [DOC-MIRA, §3. Gobernanza multi-organización y seguridad operacional, v1.4 (Vigente)] y "
                     "[FAQ-OPE, §¿Puedo ver casos de otra organización?, v2 (Vigente)], el acceso a los datos de un caso se realiza "
@@ -248,7 +248,7 @@ class MIRAOperadorAgent:
             evidencia_rag = rag_res["results"]
             citas = [r["cita"] for r in evidencia_rag]
             respuesta = (
-                "🛑 ACCIÓN NO PERMITIDA (Principio PR-1): El asistente no aprueba ni rechaza casos bajo ninguna "
+                "ACCIÓN NO PERMITIDA (Principio PR-1): El asistente no aprueba ni rechaza casos bajo ninguna "
                 "circunstancia. Según [FAQ-OPE, §¿Puedo pedirle al asistente que apruebe o rechace un caso?, v2 (Vigente)] "
                 "y [MAN-REV, §3. Decisiones disponibles, v1 (Vigente)], el asistente solo explica por qué un caso fue "
                 "derivado, muestra las reglas aplicables y prepara solicitudes de antecedentes; aprobar o rechazar "
@@ -302,7 +302,7 @@ class MIRAOperadorAgent:
             if not act_res["ok"]:
                 status = "ACCION_RECHAZADA_MCP"
                 respuesta = (
-                    f"❌ OPERACIÓN RECHAZADA POR EL SERVIDOR MCP:\n"
+                    f"OPERACIÓN RECHAZADA POR EL SERVIDOR MCP:\n"
                     f"{act_res['error']}\n\n"
                     f"Respaldo documental: {', '.join(citas)}"
                 )
@@ -311,7 +311,7 @@ class MIRAOperadorAgent:
                 requiere_confirmacion = True
                 borrador_accion = act_res.get("borrador")
                 respuesta = (
-                    f"✋ CONFIRMACIÓN HUMANA REQUERIDA (Principio PR-6):\n"
+                    f"CONFIRMACIÓN HUMANA REQUERIDA (Principio PR-6):\n"
                     f"{act_res['mensaje']}\n\n"
                     f"- **Caso:** {borrador_accion['caso_id']}\n"
                     f"- **Documentos requeridos:** {borrador_accion['documentos_solicitados']}\n"
@@ -321,7 +321,7 @@ class MIRAOperadorAgent:
             else:
                 status = "ACCION_EJECUTADA_OK"
                 respuesta = (
-                    f"✅ {act_res['mensaje']}\n\n"
+                    f"{act_res['mensaje']}\n\n"
                     f"Respaldo documental: {', '.join(citas)}"
                 )
 
@@ -356,7 +356,7 @@ class MIRAOperadorAgent:
                     "status": "ACCESO_DENEGADO_O_INEXISTENTE",
                     "usuario_id": usuario_id,
                     "pregunta": pregunta,
-                    "respuesta": f"🚫 {caso_info['error']}",
+                    "respuesta": f"{caso_info['error']}",
                     "citas": ["[FAQ-OPE, §¿Puedo ver casos de otra organización?, v2 (Vigente)]"],
                     "evidencia_rag": [],
                     "trazas_mcp": trazas_actuales,
@@ -403,7 +403,7 @@ class MIRAOperadorAgent:
             citas = [r["cita"] for r in evidencia_rag]
 
             partes_respuesta = [
-                f"📋 **Análisis del Caso {case_id}** (Organización: {org['nombre']} `{org['org_id']}`):",
+                f"**Análisis del Caso {case_id}** (Organización: {org['nombre']} `{org['org_id']}`):",
                 f"- **Estado actual:** `{caso['estado']}` | **Puntaje total:** `{caso['puntaje']}` | **Decisión sugerida:** `{caso['decision_sugerida']}`.",
                 f"- **Motivo de derivación registrado:** {caso['motivo_derivacion'] or 'Sin derivación (aprobado automático)'}.",
                 f"- **Umbrales configurados en `{org['org_id']}`:** Aprobación = `{org['umbral_aprobacion']}`, Revisión = `{org['umbral_revision']}`.",
@@ -429,20 +429,20 @@ class MIRAOperadorAgent:
                 )
 
             if caso_info["alertas_auditoria"]:
-                partes_respuesta.append("\n⚖️ **Hallazgo de Auditoría en Base de Datos vs Política Vigente:**")
+                partes_respuesta.append("\n**Hallazgo de Auditoría en Base de Datos vs Política Vigente:**")
                 for al in caso_info["alertas_auditoria"]:
                     partes_respuesta.append(f"  - {al}")
                 if "[POL-DEC, §5. Configuración por organización, v2 (Vigente)]" not in citas:
                     citas.append("[POL-DEC, §5. Configuración por organización, v2 (Vigente)]")
 
             if alertas_seguridad:
-                partes_respuesta.append("\n🚨 **Alerta de Seguridad / Intento de Manipulación Detectado en Evidencia:**")
+                partes_respuesta.append("\n**Alerta de Seguridad / Intento de Manipulación Detectado en Evidencia:**")
                 for al_seg in alertas_seguridad:
                     partes_respuesta.append(f"  - {al_seg}")
                 if "[FAQ-OPE, §Una boleta trae un texto que parece una instrucción para el sistema. ¿Qué hago?, v2 (Vigente)]" not in citas:
                     citas.append("[FAQ-OPE, §Una boleta trae un texto que parece una instrucción para el sistema. ¿Qué hago?, v2 (Vigente)]")
 
-            partes_respuesta.append("\n📚 **Respaldo en el Corpus Normativo (RAG):**")
+            partes_respuesta.append("\n**Respaldo en el Corpus Normativo (RAG):**")
             for r in evidencia_rag[:2]:
                 partes_respuesta.append(f"- Según {r['cita']}: {r['texto']}")
 
